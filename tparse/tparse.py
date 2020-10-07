@@ -110,13 +110,14 @@ def build_table_stack(text):
                 pass
             # process end tag
             elif t == '</':
-                end = text.find('>')
+                end = text.find('>', start)
                 if end < 0:
                     break
                 node = process_end_tag(text[start:end+1])
+                stack.append(node)
             # process start tag
             else:
-                end = text.find('>')
+                end = text.find('>', start)
                 if end < 0:
                     break # invalid tag
                 node = process_start_tag(text[start:end+1])
@@ -168,17 +169,19 @@ def create_tree(stack):
         1. if the item popped off is equal to the current item, no children & set parent to current
         2. if the item is new, add as child to current node. set parent relationships & update current
     """
-    current = stack.pop(0) # removes first item from list
-
-    for i, n in enumerate(stack):
-        if matching_tags(n, current):
+    current = stack.pop() 
+    # the list acts as a backwards stack - append adds to end, pop removes from end
+    i = len(stack) - 1
+    while i >= 0:
+        if matching_tags(stack[i], current):
             # if last element, we are at the root & there is no parent
-            if i != len(stack) -1:
+            if not i == 0:
                 current = current.getParent()
         else: #
-            current.addChild(n)
-            n.setParent(current)
-            current = n
+            current.addChild(stack[i])
+            stack[i].setParent(current)
+            current = stack[i]
+        i -= 1
     
     # will always return root if the stack is proper
     return current

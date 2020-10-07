@@ -1,5 +1,5 @@
 import unittest
-import tparse
+from tparse import tparse
 
 class Test_parse_tables(unittest.TestCase):
 
@@ -72,9 +72,9 @@ class Test_create_tree(unittest.TestCase):
 
         tree = tparse.create_tree(stack)
 
-        self.assertEqual(tree.getType(), "/table")
+        self.assertEqual(tree.getType(), "table")
         self.assertEqual(len(tree.children), 2)
-        self.assertEqual(tree.children[0].children[0].getType(), "/td")
+        self.assertEqual(tree.children[1].children[0].getType(), "td")
 
     def test_create_tree_invalid_stack_missing_tag(self):
         stack = []
@@ -92,12 +92,13 @@ class Test_create_tree(unittest.TestCase):
 class Test_build_table_stack(unittest.TestCase):
 
     def test_build_table_stack_valid(self):
-        text = "<table><tr><td></td></tr><tr></tr></table>"
+        text = "<table><tr><td>hi there</td></tr><tr></tr></table>"
         stack = tparse.build_table_stack(text)
         for item in stack:
             print(item.getType())
+        
         self.assertEqual(len(stack), 8)
-
+        # todo: self.assertEqual(stack[2].text, "hi there")
 
 
 if __name__ == '__main__':
