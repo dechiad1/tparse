@@ -94,12 +94,47 @@ class Test_build_table_stack(unittest.TestCase):
     def test_build_table_stack_valid(self):
         text = "<table><tr><td>hi there</td></tr><tr></tr></table>"
         stack = tparse.build_table_stack(text)
-        for item in stack:
-            print(item.getType())
+        #for item in stack:
+            #print(item.getType())
         
         self.assertEqual(len(stack), 8)
-        # todo: self.assertEqual(stack[2].text, "hi there")
+        self.assertEqual(stack[2].text, "hi there")
 
+
+class Test_build_list_of_text_rows(unittest.TestCase):
+
+    def test_build_list_of_text_rows_valid(self):
+        text = "<table><tr><td>hi</td><td>there</td></tr><tr><td>don</td><td>miguel</td><td>arninio</td></tr></table>"
+        stack = tparse.build_table_stack(text)
+        tree = tparse.create_tree(stack)
+        #tableNode = stack[0]
+        print(tree.getType())
+        result = tree.build_list_of_text_rows()
+
+        # for item in result: 
+        #     print(item)
+        self.assertEqual(len(result), 2)
+
+class Test_parse_table_text(unittest.TestCase):
+
+    def test_get_tables(self):
+        text = "<table> asdfasdfasdf </table> <table> asdfasdf </table>"
+        tables = tparse.get_tables(text)
+
+        self.assertEqual(2, len(tables))
+        self.assertEqual("<table> asdfasdfasdf </table>", tables[0])
+
+class Test_build_table_tree(unittest.TestCase):
+
+    def test_build_table_tree(self):
+        text = """
+        <table><thead><tr><th rowspan="2">Name</th><th rowspan="2">ID</th><th colspan="2">MembershipDates</th><th rowspan="2">Balance</th></tr><tr><th>Joined</th><th>Canceled</th></tr></thead><tbody><tr><th scope="row">MargaretNguyen</th><td>427311</td><td><time datetime="2010-06-03">June3,2010</time></td><td>n/a</td><td>0.00</td></tr><tr><th scope="row">EdvardGalinski</th><td>533175</td><td><time datetime="2011-01013">January13,2011</time></td><td><time datetime="2017-04008">April8,2017</time></td><td>37.00</td></tr><tr><th scope="row">HoshiNakamura</th><td>601942</td><td><time datetime="2012-07-23">July23,2012</time></td><td>n/a</td><td>15.00</td></tr></tbody></table>
+        """
+
+        tableTree = tparse.build_table_tree(text)
+
+        # root has two children: thead & tbody
+        self.assertEqual(2, len(tableTree.getChildren()))
 
 if __name__ == '__main__':
     unittest.main()
